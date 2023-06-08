@@ -12,7 +12,8 @@ private:
 public:
     Dijkstra();
     ~Dijkstra();
-    void updateMap(Map::Grid<> & Grid, int & totalVisited);
+    void updateMap(Map::Grid<> & Grid, bool & totalVisited);
+    void startCell(int y, int x);
     bool isValidCell(int row, int col);
 };
 

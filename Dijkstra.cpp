@@ -1,9 +1,14 @@
 #include "Dijkstra.h"
 Dijkstra::Dijkstra(){
-    this->myQueue.emplace(0,0);
+    
 }
 
-void Dijkstra::updateMap(Map::Grid<> & Grid, int & totalVisited){
+void Dijkstra::startCell(int y, int x){
+    this->myQueue.emplace(y,x);
+}
+
+
+void Dijkstra::updateMap(Map::Grid<> & Grid, bool & totalVisited) {
     std::pair<int, int> curr = myQueue.front();
     // Explore the neighboring cells
     int dr[] = {-1, 0, 1, 0};
@@ -12,11 +17,20 @@ void Dijkstra::updateMap(Map::Grid<> & Grid, int & totalVisited){
     for (int i = 0; i < 4; i++) {
         int newRow = curr.first + dr[i];
         int newCol = curr.second + dc[i];
-        if (isValidCell(newRow, newCol) && Grid[newCol][newRow].type != Type::VISITED) {
-            myQueue.emplace(newRow,newCol);
-            if (Grid[newCol][newRow].type == Type::EMPTY)
-                Grid[newCol][newRow].type = Type::VISITED;
-            totalVisited ++;
+        
+        if (isValidCell(newRow, newCol)) {
+            Cell& cell = Grid[newCol][newRow];
+            Type type = cell.type;
+            if (type == GOAL){
+                totalVisited = true;
+                return;
+            }
+            if (type != VISITED){
+                if (type == EMPTY) {
+                    myQueue.emplace(newRow, newCol);
+                    cell.type = Type::VISITED;
+                }
+            }
         }
     }
     myQueue.pop();

@@ -68,7 +68,7 @@ int main()
     
     openSet.push_back(start);
 
-    int totalVisited = 0;
+    bool totalVisited = false;
 
     // set the cell sizes
     RectangleShape cell(sf::Vector2f(Size::CELL_SIZE, Size::CELL_SIZE));
@@ -120,8 +120,8 @@ int main()
                                 
                                 if(startSet == false){
                                     Grid[col][row].type = Type::START;
-
                                     startSet = true;
+                                    test.startCell(row, col);
                                 }else if (goalSet == false){
                                     Grid[col][row].type = Type::GOAL;
                                     goalSet = true;
@@ -154,9 +154,13 @@ int main()
 
 
             // start algorithms after start and goal cells are set
-            if(startSet && goalSet && search)
-                if (totalVisited < 2304)
+            if(startSet && goalSet && search){
+                if (totalVisited == false){
                     test.updateMap(Grid, totalVisited);
+                    cout << totalVisited << endl;
+                }
+            }
+
             
             window.clear();
 

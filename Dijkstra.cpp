@@ -14,7 +14,8 @@ void Dijkstra::updateMap(Map::Grid<> & Grid, int & totalVisited){
         int newCol = curr.second + dc[i];
         if (isValidCell(newRow, newCol) && Grid[newCol][newRow].type != Type::VISITED) {
             myQueue.emplace(newRow,newCol);
-            Grid[newCol][newRow].type = Type::VISITED;
+            if (Grid[newCol][newRow].type == Type::EMPTY)
+                Grid[newCol][newRow].type = Type::VISITED;
             totalVisited ++;
         }
     }

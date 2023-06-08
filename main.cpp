@@ -30,6 +30,9 @@ void draw(RectangleShape & cell, RenderWindow& window, Map::Grid<> & Grid, int t
                 case Type::VISITED:
                     cell.setFillColor(sf::Color::Cyan);
                     break;
+                case Type::WALL:
+                    cell.setFillColor(sf::Color::Black);
+                    break;
             }
             cell.setPosition(i * Size::CELL_SIZE, j * Size::CELL_SIZE);
             window.draw(cell);
@@ -86,13 +89,13 @@ int main()
 
     bool startSet = false;
     bool goalSet = false;
+    bool search = false;
 
+    // sf::Vector2i start(0, 0);
+    // sf::Vector2i endl(0, 0);
     
     while (window.isOpen())
     {
-
-
-
         // Accumulate the elapsed time
         elapsedTime += clock.restart();
 
@@ -101,41 +104,59 @@ int main()
         {   
             while (window.pollEvent(event))
             {   
+
+
                 switch (event.type)
                 {
-                case Event::Closed:
-                    window.close();
-                    break;
-                case Event::MouseButtonPressed:
-                    if (startSet == false || goalSet == false){
-                        if (event.mouseButton.button == Mouse::Left){
-                            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                            int col = std::ceil(mousePos.x / Size::CELL_SIZE);
-                            int row = std::ceil(mousePos.y / Size::CELL_SIZE);
-                            if(startSet == false){
-                                Grid[col][row].type = Type::START;
-                                startSet = true;
-                            }else if (goalSet == false){
-                                Grid[col][row].type = Type::GOAL;
-                                goalSet = true;
+                    case Event::Closed:
+                        window.close();
+                        break;
+                    case Event::MouseButtonPressed:
+                        if (startSet == false || goalSet == false){
+                            if (event.mouseButton.button == Mouse::Left){
+                                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                                int col = std::ceil(mousePos.x / Size::CELL_SIZE);
+                                int row = std::ceil(mousePos.y / Size::CELL_SIZE);
+                                
+                                if(startSet == false){
+                                    Grid[col][row].type = Type::START;
+
+                                    startSet = true;
+                                }else if (goalSet == false){
+                                    Grid[col][row].type = Type::GOAL;
+                                    goalSet = true;
+                                }
                             }
                         }
-                    }
-                    break;
+                        break;
+                    case Event::MouseMoved:
+                        if (startSet && goalSet && !search){
+                            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                                cout << mousePos.x << " " << mousePos.y << std::endl;
+                                int col = std::ceil(mousePos.x / Size::CELL_SIZE);
+                                int row = std::ceil(mousePos.y / Size::CELL_SIZE);
+
+                                if(Grid[col][row].type != Type::START && Grid[col][row].type != Type::GOAL)
+                                    Grid[col][row].type = Type::WALL;
+                            }
+                        }
+                        break;
+                    case Event::KeyPressed:
+                        if (event.key.code == Keyboard::Space){
+                            search = true;
+                        }
+                        break;
                 }
                 
             }
 
 
 
-
-
-            // // Clear the window
-            
-            // cout << totalVisited << endl;
-
-            // if (totalVisited < 2304)
-            //     test.updateMap(Grid, totalVisited);
+            // start algorithms after start and goal cells are set
+            if(startSet && goalSet && search)
+                if (totalVisited < 2304)
+                    test.updateMap(Grid, totalVisited);
             
             window.clear();
 
@@ -145,7 +166,12 @@ int main()
             window.display();
 
             // // Decrease the elapsed time
-            // elapsedTime -= timePerFrame;
+            elapsedTime -= timePerFrame;
+
+            // Window is closed, terminate the program
+            if (!window.isOpen()) {
+                break;
+            }
         }
     }
 

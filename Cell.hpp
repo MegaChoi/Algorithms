@@ -16,7 +16,8 @@ enum Type{
 	WALL,
 	VISITED,
 	EMPTY,
-	GOAL
+	GOAL,
+	PATH
 };
 
 
@@ -24,11 +25,7 @@ enum Type{
 class Cell{
 public:
 	Type type = EMPTY;
-	int x;
-	int y;
-	double f;
-	double g;
-	double h;
+	double distance = 0;
 	Cell() {};
 };
 

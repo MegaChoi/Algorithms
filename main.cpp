@@ -33,12 +33,24 @@ void draw(RectangleShape & cell, RenderWindow& window, Map::Grid<> & Grid, int t
                 case Type::WALL:
                     cell.setFillColor(sf::Color::Black);
                     break;
+                case Type::PATH:
+                    cell.setFillColor(sf::Color::Yellow);
+                    break;
             }
             cell.setPosition(i * Size::CELL_SIZE, j * Size::CELL_SIZE);
             window.draw(cell);
         }
     }
     
+}
+
+void distance(Map::Grid<> & Grid, int x, int y){
+    for (int i = 0; i < Size::COLS; ++i){
+        for (int j = 0; j < Size::ROWS; ++j){
+            Grid[i][j].distance = sqrt(pow((x - i),2) + pow((y - j),2));
+            // cout << sqrt(pow((x - i),2) + pow((y - j),2)) << endl;
+        }
+    }
 }
 
 int main()
@@ -91,8 +103,8 @@ int main()
     bool goalSet = false;
     bool search = false;
 
-    // sf::Vector2i start(0, 0);
-    // sf::Vector2i endl(0, 0);
+    sf::Vector2i startCell(0, 0);
+    sf::Vector2i goalCell(0, 0);
     
     while (window.isOpen())
     {
@@ -122,8 +134,10 @@ int main()
                                     Grid[col][row].type = Type::START;
                                     startSet = true;
                                     test.startCell(row, col);
+                                    
                                 }else if (goalSet == false){
                                     Grid[col][row].type = Type::GOAL;
+                                    distance(Grid, col, row);
                                     goalSet = true;
                                 }
                             }
@@ -133,7 +147,7 @@ int main()
                         if (startSet && goalSet && !search){
                             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                                cout << mousePos.x << " " << mousePos.y << std::endl;
+                                // cout << mousePos.x << " " << mousePos.y << std::endl;
                                 int col = std::ceil(mousePos.x / Size::CELL_SIZE);
                                 int row = std::ceil(mousePos.y / Size::CELL_SIZE);
 
@@ -157,7 +171,7 @@ int main()
             if(startSet && goalSet && search){
                 if (totalVisited == false){
                     test.updateMap(Grid, totalVisited);
-                    cout << totalVisited << endl;
+                    // cout << totalVisited << endl;
                 }
             }
 

@@ -1,24 +1,33 @@
-#ifndef D
-#define D
+#ifndef DIJKSTRA_H
+#define DIJKSTRA_H
+
 #include "Cell.hpp"
 #include "Astar.hpp"
+#include <math.h>
 #include <vector>
 #include <queue>
 #include <climits>
 #include <iostream>
-class Dijkstra
-{
+#include <functional>
+
+struct compareFunc {
+    bool operator()(Cell const* a, Cell const* b)
+    {
+        return a->distance > b->distance;
+    }
+};
+class Dijkstra {
 private:
-    pair<int, int> start;
-    std::queue<std::pair<int, int>> myQueue;
+    Cell startCell;
+    std::priority_queue<Cell*, std::vector<Cell*>, compareFunc> pq;
+
 public:
     Dijkstra();
     ~Dijkstra();
-    void updateMap(Map::Grid<> & Grid, bool & totalVisited);
-    void path(Map::Grid<> & Grid);
-    void startCell(int y, int x);
+    void updateMap(Map::Grid<Cell>& Grid, bool& totalVisited);
+    void path(Cell * cell);
+    void setStartCell(Cell& startCell);
     bool isValidCell(int row, int col);
 };
 
 #endif
-

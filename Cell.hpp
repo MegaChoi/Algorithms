@@ -1,6 +1,8 @@
 #ifndef CELL
 #define CELL
 #include <array>
+#include <climits>
+
 
 using namespace std;
 
@@ -22,11 +24,21 @@ enum Type{
 
 
 
-class Cell{
+class Cell {
 public:
-	Type type = EMPTY;
-	double distance = 0;
-	Cell() {};
+    Type type = EMPTY;
+    int row;
+    int col;
+    double distance = INT_MAX;
+
+	Cell * prev = nullptr;
+
+    Cell() {}
+
+    void set(int x, int y) {
+        col = x;
+        row = y;
+    }
 };
 
 namespace Map {

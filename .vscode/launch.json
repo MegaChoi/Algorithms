@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/ducvu/OneDrive/Desktop/Algorithms",
-      "program": "c:/Users/ducvu/OneDrive/Desktop/Algorithms/build/Debug/outDebug",
+      "cwd": "c:/Users/Duc/OneDrive/Desktop/250323/Algorithms/Algorithms",
+      "program": "c:/Users/Duc/OneDrive/Desktop/250323/Algorithms/Algorithms/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

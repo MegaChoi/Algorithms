@@ -7,11 +7,14 @@
 #include "Cell.hpp"
 #include "Astar.hpp"
 #include "Dijkstra.h"
+#include <fstream>
+#include <iostream>
 using namespace sf;
 using namespace std;
 
 
-void draw(RectangleShape & cell, RenderWindow& window, Map::Grid<> & Grid, int totalVisited) {
+
+void draw(RectangleShape & cell, RenderWindow& window, Map::Grid<> & Grid, int goalFound) {
     // Draw the grid
     for (int i = 0; i < Size::COLS; ++i)
     {
@@ -44,14 +47,13 @@ void draw(RectangleShape & cell, RenderWindow& window, Map::Grid<> & Grid, int t
     
 }
 
-void distance(Map::Grid<> & Grid, int x, int y){
-    for (int i = 0; i < Size::COLS; ++i){
-        for (int j = 0; j < Size::ROWS; ++j){
-            Grid[i][j].distance = sqrt(pow((x - i),2) + pow((y - j),2));
-            // cout << sqrt(pow((x - i),2) + pow((y - j),2)) << endl;
-        }
-    }
-}
+// void distance(Map::Grid<> & Grid, int x, int y){
+//     for (int i = 0; i < Size::COLS; ++i){
+//         for (int j = 0; j < Size::ROWS; ++j){
+//             Grid[i][j].distance = sqrt(pow((x - i),2) + pow((y - j),2));
+//         }
+//     }
+// }
 
 int main()
 {   
@@ -61,26 +63,23 @@ int main()
     RenderWindow window(VideoMode(Size::WIDTH, Size::HEIGHT), "Path Finding", sf::Style::Titlebar | sf::Style::Close);
     window.setSize(Vector2u(Size::WIDTH, Size::HEIGHT));
 
+    // Init grid
     Map::Grid<> Grid = {};
 
-    vector<Cell> openSet = {};
-    vector<Cell> closeSet = {};
 
-    // Initialize the grid with zeros
+    // Init all cells with distance of INFINITE
     for (int i = 0; i < Size::COLS; ++i)
     {
         for (int j = 0; j < Size::ROWS; ++j)
         {
             Grid[i][j] = Cell();
+            Grid[i][j].set(i,j);
         }
     }
     
-    Cell start = Grid[0][0];
-    Cell end = Grid[Size::COLS-1][Size::ROWS-1];
     
-    openSet.push_back(start);
 
-    bool totalVisited = false;
+    bool goalFound = false;
 
     // set the cell sizes
     RectangleShape cell(sf::Vector2f(Size::CELL_SIZE, Size::CELL_SIZE));
@@ -90,8 +89,7 @@ int main()
     int y = 0;
 
     Dijkstra test;
-    // Main loop
-    // Main loop
+
     // Set the update rate to 60 times per second
     sf::Clock clock;
     sf::Time timePerFrame = sf::seconds(1.0f / 60.0f);
@@ -132,12 +130,13 @@ int main()
                                 
                                 if(startSet == false){
                                     Grid[col][row].type = Type::START;
+                                    Grid[col][row].distance = 0;
                                     startSet = true;
-                                    test.startCell(row, col);
+                                    test.setStartCell(Grid[col][row]);
                                     
                                 }else if (goalSet == false){
                                     Grid[col][row].type = Type::GOAL;
-                                    distance(Grid, col, row);
+                                    // distance(Grid, col, row);
                                     goalSet = true;
                                 }
                             }
@@ -169,16 +168,16 @@ int main()
 
             // start algorithms after start and goal cells are set
             if(startSet && goalSet && search){
-                if (totalVisited == false){
-                    test.updateMap(Grid, totalVisited);
-                    // cout << totalVisited << endl;
+                if (goalFound == false){
+                    test.updateMap(Grid, goalFound);
+                    // cout << goalFound << endl;
                 }
             }
 
             
             window.clear();
 
-            draw(cell, window, Grid, totalVisited);
+            draw(cell, window, Grid, goalFound);
 
             // // Display the updated window
             window.display();

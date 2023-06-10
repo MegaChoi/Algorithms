@@ -3,81 +3,69 @@ Dijkstra::Dijkstra(){
     
 }
 
-void Dijkstra::startCell(int x, int y){
-    this->myQueue.emplace(x,y);
-    this->start = pair(x,y);
+void Dijkstra::setStartCell(Cell & startCell){
+    this->pq.push(&startCell);
 }
 
 
-void Dijkstra::updateMap(Map::Grid<> & Grid, bool & totalVisited) {
-    std::pair<int, int> curr = myQueue.front();
+void Dijkstra::updateMap(Map::Grid<> & Grid, bool & goalFound) {
+    Cell * curr = pq.top();
     // Explore the neighboring cells
-    int dr[] = {-1, 0, 1, 0};
-    int dc[] = {0, 1, 0, -1};
+    int dr[] = {-1, 0, 1, 0, -1, -1, 1, 1};
+    int dc[] = {0, 1, 0, -1, -1, 1, 1, -1};
 
-    for (int i = 0; i < 4; i++) {
-        int newRow = curr.first + dr[i];
-        int newCol = curr.second + dc[i];
+    for (int i = 0; i < 8; i++) {
+        int newCol = curr->col + dr[i];
+        int newRow = curr->row + dc[i];
         
-        if (isValidCell(newRow, newCol)) {
-            Cell& cell = Grid[newCol][newRow];
-            Type type = cell.type;
+        if (isValidCell(newCol, newRow)) {
+            Cell * cell = &Grid[newCol][newRow];
+            Type type = cell->type;
             if (type == WALL){
-                cell.distance = 0;
+                continue;
             }
             if (type == GOAL){
-                totalVisited = true;
-                path(Grid);
+                cell->prev = curr;
+                goalFound = true;
+                path(cell);
                 return;
             }
-            if (type != VISITED){
-                if (type == EMPTY) {
-                    myQueue.emplace(newRow, newCol);
-                    cell.type = Type::VISITED;
-                }
+
+            double newDist = 0;
+            if (i > 3){
+                // update distance for diagonal cells
+                newDist = sqrt(2) + curr->distance;
+            }else{
+                newDist = curr->distance + 1;
+            }
+
+            if(newDist < cell->distance)
+                cell->distance = newDist;
+
+            
+            if (type == EMPTY && type != VISITED){
+                pq.push(cell);
+                cell->type = Type::VISITED;
+                cell->prev = curr;
             }
         }
     }
-    myQueue.pop();
-}
-
-
-void Dijkstra::path(Map::Grid<> & Grid) {
-    std::pair<int, int> curr = start;
-    Cell& cell = Grid[curr.first][curr.second];
-
-    int dr[] = {-1, 0, 1, 0};
-    int dc[] = {0, 1, 0, -1};
-
-    while (cell.type != GOAL) {
-        double min = 1000;
-        std::pair<int, int> nextCell;
-
-        for (int i = 0; i < 4; i++) {
-            int newRow = curr.first + dr[i];
-            int newCol = curr.second + dc[i];
-            if (isValidCell(newRow, newCol)){
-                Cell& temp = Grid[newCol][newRow];
-
-                if (temp.distance < min) {
-                    min = temp.distance;
-                    nextCell = std::make_pair(newRow, newCol);
-                }
-            }
-        }
-
-        curr = nextCell;
-        cell = Grid[curr.first][curr.second];
-        std::cout << curr.first << curr.second << std::endl;
-        if (cell.type != GOAL) {
-            cell.type = PATH;
-        }
-    }
+    pq.pop();
 }
 // Function to check if a given cell is valid within the grid
-bool Dijkstra::isValidCell(int row, int col) {
+bool Dijkstra::isValidCell( int col, int row) {
     return (row >= 0 && row < 36 && col >= 0 && col < 64);
 }
+
+void Dijkstra::path(Cell * cell) {
+    Cell * temp = cell; 
+    while (cell->type != START) {
+        cout << cell->col << " " << cell->row << endl;
+        cell->type = PATH;
+        cell = cell->prev;
+    }
+}
+
 
 Dijkstra::~Dijkstra()
 {

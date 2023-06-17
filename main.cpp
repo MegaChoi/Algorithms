@@ -47,13 +47,6 @@ void draw(RectangleShape & cell, RenderWindow& window, Map::Grid<> & Grid, int g
     
 }
 
-// void distance(Map::Grid<> & Grid, int x, int y){
-//     for (int i = 0; i < Size::COLS; ++i){
-//         for (int j = 0; j < Size::ROWS; ++j){
-//             Grid[i][j].distance = sqrt(pow((x - i),2) + pow((y - j),2));
-//         }
-//     }
-// }
 
 int main()
 {   
@@ -146,7 +139,6 @@ int main()
                         if (startSet && goalSet && !search){
                             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                                // cout << mousePos.x << " " << mousePos.y << std::endl;
                                 int col = std::ceil(mousePos.x / Size::CELL_SIZE);
                                 int row = std::ceil(mousePos.y / Size::CELL_SIZE);
 
@@ -158,6 +150,18 @@ int main()
                     case Event::KeyPressed:
                         if (event.key.code == Keyboard::Space){
                             search = true;
+                        }else if (event.key.code == Keyboard::K){
+                            // Init all cells with distance of INFINITE
+                            for (int i = 0; i < Size::COLS; ++i)
+                            {
+                                for (int j = 0; j < Size::ROWS; ++j)
+                                {
+                                    Grid[i][j] .type = EMPTY;
+                                }
+                            }
+                            startSet = false;
+                            goalSet = false;
+                            search = false;
                         }
                         break;
                 }

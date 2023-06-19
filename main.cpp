@@ -5,7 +5,7 @@
 #include <thread>
 #include <cmath>
 #include "Cell.hpp"
-#include "Astar.hpp"
+#include "Astar.h"
 #include "Dijkstra.h"
 #include <fstream>
 #include <iostream>
@@ -81,7 +81,7 @@ int main()
     int x = 0;
     int y = 0;
 
-    Dijkstra test;
+    Astar test;
 
     // Set the update rate to 60 times per second
     sf::Clock clock;
@@ -131,6 +131,7 @@ int main()
                                     Grid[col][row].type = Type::GOAL;
                                     // distance(Grid, col, row);
                                     goalSet = true;
+                                    test.setGoalCell(Grid[col][row], Grid);
                                 }
                             }
                         }

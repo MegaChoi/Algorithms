@@ -1,5 +1,5 @@
-#ifndef DIJKSTRA_H
-#define DIJKSTRA_H
+#ifndef ASTAR_H
+#define ASTAR_H
 
 #include "Cell.hpp"
 #include <math.h>
@@ -12,20 +12,23 @@
 struct compareFunc {
     bool operator()(Cell const* a, Cell const* b)
     {
-        return a->distance > b->distance;
+        return a->fValue > b->fValue;
     }
 };
-class Dijkstra {
+class Astar {
 private:
+    Cell goalCell;
     std::priority_queue<Cell*, std::vector<Cell*>, compareFunc> pq;
 
 public:
-    Dijkstra();
-    ~Dijkstra();
+    Astar();
+    ~Astar();
     void updateMap(Map::Grid<Cell>& Grid, bool& totalVisited);
     void path(Cell * cell);
-    void setStartCell(Cell& startCell);
+    void setGoalCell(Cell & startCell, Map::Grid<> & Grid);
+    void setStartCell(Cell & startCell);
     bool isValidCell(int row, int col);
 };
 
 #endif
+

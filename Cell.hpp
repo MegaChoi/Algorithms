@@ -29,7 +29,16 @@ public:
     Type type = EMPTY;
     int row;
     int col;
+
+	// g value
     double distance = INT_MAX;
+
+	// h value 
+	double hValue = 0;
+
+	// f value
+	double fValue = 0;
+
 
 	Cell * prev = nullptr;
 

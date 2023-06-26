@@ -1,51 +1,6 @@
-#include <SFML/Graphics.hpp>
-#include <iostream>
-#include <array>
-#include <chrono>
-#include <thread>
-#include <cmath>
-#include "Cell.hpp"
-#include "Astar.h"
-#include "Dijkstra.h"
-#include <fstream>
-#include <iostream>
-using namespace sf;
-using namespace std;
+#include "Menu.h"
 
 
-
-void draw(RectangleShape & cell, RenderWindow& window, Map::Grid<> & Grid) {
-    // Draw the grid
-    for (int i = 0; i < Size::COLS; ++i)
-    {
-        for (int j = 0; j < Size::ROWS; ++j)
-        {   
-            switch(Grid[i][j].type){
-                case Type::START:
-                    cell.setFillColor(sf::Color::Red);
-                    break;
-                case Type::EMPTY:
-                    cell.setFillColor(sf::Color::White);
-                    break;
-                case Type::GOAL:
-                    cell.setFillColor(sf::Color::Green);
-                    break;
-                case Type::VISITED:
-                    cell.setFillColor(sf::Color::Cyan);
-                    break;
-                case Type::WALL:
-                    cell.setFillColor(sf::Color::Black);
-                    break;
-                case Type::PATH:
-                    cell.setFillColor(sf::Color::Yellow);
-                    break;
-            }
-            cell.setPosition(i * Size::CELL_SIZE, j * Size::CELL_SIZE);
-            window.draw(cell);
-        }
-    }
-    
-}
 
 
 int main()
@@ -55,6 +10,10 @@ int main()
     // Create the SFML window
     RenderWindow window(VideoMode(Size::WIDTH, Size::HEIGHT), "Path Finding", sf::Style::Titlebar | sf::Style::Close);
     window.setSize(Vector2u(Size::WIDTH, Size::HEIGHT));
+
+    Menu Menu;
+
+
 
     // Init grid
     Map::Grid<> Grid = {};
@@ -81,7 +40,7 @@ int main()
     int x = 0;
     int y = 0;
 
-    Algorithm * algorithm = new Astar;
+    Algorithm * algorithm;
 
     // Set the update rate to 60 times per second
     sf::Clock clock;
@@ -90,6 +49,7 @@ int main()
     // Process events
     Event event;
 
+    bool algoSet = false;
     bool startSet = false;
     bool goalSet = false;
     bool search = false;
@@ -165,26 +125,39 @@ int main()
                             goalSet = false;
                             search = false;
 
+                        }else if (event.key.code == Keyboard::Up){
+                            Menu.MoveUp();
+                        }else if (event.key.code == Keyboard::Down){
+                            Menu.MoveDown();
+                        }else if (event.key.code == Keyboard::Enter){
+                            Algo selectedAlgo = Menu.getOption();
+                            if(selectedAlgo == ASTAR){
+                                algorithm = new Astar();
+                                algoSet = true;
+                            }else if(selectedAlgo == DIJKSTRA){
+                                algorithm = new Dijkstra();
+                                algoSet = true;
+                            }
                         }
                         break;
                 }
                 
             }
 
-
-
-            // start algorithms after start and goal cells are set
-            if(startSet && goalSet && search){
-                if (goalFound == false){
-                    algorithm->updateMap(Grid, goalFound);
-                    // cout << goalFound << endl;
-                }
-            }
-
-            
             window.clear();
 
-            draw(cell, window, Grid);
+            // start algorithms after start and goal cells are set
+            if(algoSet){
+                if(startSet && goalSet && search){
+                    if (goalFound == false){
+                        algorithm->updateMap(Grid, goalFound);
+                        // cout << goalFound << endl;
+                    }
+                }
+                Render::draw(cell, window, Grid);
+            }else{
+                Menu.draw(window);
+            }
 
             // // Display the updated window
             window.display();

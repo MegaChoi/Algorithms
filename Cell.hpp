@@ -22,6 +22,11 @@ enum Type{
 	PATH
 };
 
+enum Algo{
+	ASTAR,
+	DIJKSTRA,
+	NONE,
+};
 
 
 class Cell {

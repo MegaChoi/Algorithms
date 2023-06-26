@@ -4,7 +4,7 @@
             "name": "windows-gcc-x64",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/SFML-2.5.1/include"
+                "C:/SFML-2.5.1/include",
             ],
             "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
             "cStandard": "${default}",
@@ -13,7 +13,7 @@
             "compilerArgs": [
                 ""
             ],
-            "configurationProvider": "ms-vscode.makefile-tools"
+            "configurationProvider": "ms-vscode.cpptools"
         }
     ],
     "version": 4

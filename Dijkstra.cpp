@@ -1,12 +1,7 @@
 #include "Dijkstra.h"
-Dijkstra::Dijkstra(){
-    
-}
-
 void Dijkstra::setStartCell(Cell & startCell){
     this->pq.push(&startCell);
 }
-
 
 void Dijkstra::updateMap(Map::Grid<> & Grid, bool & goalFound) {
     Cell * curr = pq.top();

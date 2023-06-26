@@ -1,25 +1,18 @@
 #ifndef ASTAR_H
 #define ASTAR_H
 
-#include "Cell.hpp"
-#include <math.h>
-#include <vector>
-#include <queue>
-#include <climits>
-#include <iostream>
-#include <functional>
+#include "Algorithm.h"
 
-struct compareFunc {
-    bool operator()(Cell const* a, Cell const* b)
-    {
-        return a->fValue > b->fValue;
-    }
-};
-class Astar {
+
+class Astar : public Algorithm{
 private:
-    Cell goalCell;
+    struct compareFunc {
+        bool operator()(Cell const* a, Cell const* b)
+        {
+            return a->fValue > b->fValue;
+        }
+    };
     std::priority_queue<Cell*, std::vector<Cell*>, compareFunc> pq;
-
 public:
     Astar();
     ~Astar();
@@ -27,7 +20,6 @@ public:
     void path(Cell * cell);
     void setGoalCell(Cell & startCell, Map::Grid<> & Grid);
     void setStartCell(Cell & startCell);
-    bool isValidCell(int row, int col);
 };
 
 #endif

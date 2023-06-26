@@ -14,7 +14,7 @@ using namespace std;
 
 
 
-void draw(RectangleShape & cell, RenderWindow& window, Map::Grid<> & Grid, int goalFound) {
+void draw(RectangleShape & cell, RenderWindow& window, Map::Grid<> & Grid) {
     // Draw the grid
     for (int i = 0; i < Size::COLS; ++i)
     {
@@ -81,7 +81,7 @@ int main()
     int x = 0;
     int y = 0;
 
-    Astar test;
+    Algorithm * algorithm = new Astar;
 
     // Set the update rate to 60 times per second
     sf::Clock clock;
@@ -107,8 +107,6 @@ int main()
         {   
             while (window.pollEvent(event))
             {   
-
-
                 switch (event.type)
                 {
                     case Event::Closed:
@@ -125,13 +123,13 @@ int main()
                                     Grid[col][row].type = Type::START;
                                     Grid[col][row].distance = 0;
                                     startSet = true;
-                                    test.setStartCell(Grid[col][row]);
+                                    algorithm->setStartCell(Grid[col][row]);
                                     
                                 }else if (goalSet == false){
                                     Grid[col][row].type = Type::GOAL;
                                     // distance(Grid, col, row);
                                     goalSet = true;
-                                    test.setGoalCell(Grid[col][row], Grid);
+                                    algorithm->setGoalCell(Grid[col][row], Grid);
                                 }
                             }
                         }
@@ -160,9 +158,13 @@ int main()
                                     Grid[i][j] .type = EMPTY;
                                 }
                             }
+                            delete algorithm;
+                            algorithm = new Astar();
+                            goalFound = false;
                             startSet = false;
                             goalSet = false;
                             search = false;
+
                         }
                         break;
                 }
@@ -174,7 +176,7 @@ int main()
             // start algorithms after start and goal cells are set
             if(startSet && goalSet && search){
                 if (goalFound == false){
-                    test.updateMap(Grid, goalFound);
+                    algorithm->updateMap(Grid, goalFound);
                     // cout << goalFound << endl;
                 }
             }
@@ -182,7 +184,7 @@ int main()
             
             window.clear();
 
-            draw(cell, window, Grid, goalFound);
+            draw(cell, window, Grid);
 
             // // Display the updated window
             window.display();

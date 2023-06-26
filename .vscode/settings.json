@@ -114,6 +114,7 @@
     "typeinfo": "cpp",
     "variant": "cpp",
     "fstream": "cpp",
-    "climits": "cpp"
+    "climits": "cpp",
+    "queue": "cpp"
   }
 }

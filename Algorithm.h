@@ -17,15 +17,20 @@ protected:
     Map::Grid<> Grid;
     Cell goalCell;
     Cell startCell;
+
 public:
-    void virtual updateMap(bool & goalFound){};
-    void virtual path(Cell * cell){};
-    void virtual setStartCell(int col, int row){};
-    void virtual setGoalCell(int col, int row){};
-    void virtual render(RectangleShape & cell, RenderWindow& window){};
-    void virtual setWall(int col, int row){};
-    void virtual reset(){};
+    virtual void updateMap(bool &goalFound) {};
+    virtual void path(Cell *cell) {};
+    virtual void setStartCell(int col, int row) {};
+    virtual void setGoalCell(int col, int row) {};
+    virtual void render(RectangleShape &cell, RenderWindow &window) {
+        Render::draw(cell, window, Grid);
+    };
+    virtual void setWall(int col, int row) {
+        if (Grid[col][row].type != Type::START && Grid[col][row].type != Type::GOAL)
+            Grid[col][row].type = Type::WALL;
+    };
+    virtual void reset() {};
 };
 
 #endif
-

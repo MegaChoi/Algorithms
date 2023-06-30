@@ -19,7 +19,7 @@ void Astar::reset(){
             Grid[i][j].set(i,j);
         }
     }
-
+    
     while(!pq.empty()){
         pq.pop();
     }
@@ -51,19 +51,18 @@ void Astar::setGoalCell(int col, int row){
 
 void Astar::setStartCell(int col, int row){
     Grid[col][row].type = Type::START;
-    cout << Grid[col][row].col << Grid[col][row].row << endl;
     Grid[col][row].distance = 0;
     this->pq.push(&Grid[col][row]);
 }
 
-void Astar::render(RectangleShape & cell, RenderWindow& window){
-    Render::draw(cell, window, Grid);
-}
+// void Astar::render(RectangleShape & cell, RenderWindow& window){
+//     Render::draw(cell, window, Grid);
+// }
 
-void Astar::setWall(int col, int row){
-    if(Grid[col][row].type != Type::START && Grid[col][row].type != Type::GOAL)
-    Grid[col][row].type = Type::WALL;
-}
+// void Astar::setWall(int col, int row){
+//     if(Grid[col][row].type != Type::START && Grid[col][row].type != Type::GOAL)
+//     Grid[col][row].type = Type::WALL;
+// }
 
 
 

@@ -1,9 +1,41 @@
 #include "Dijkstra.h"
-void Dijkstra::setStartCell(Cell & startCell){
-    this->pq.push(&startCell);
+Dijkstra::Dijkstra(){
+    for (int i = 0; i < Size::COLS; ++i)
+    {
+        for (int j = 0; j < Size::ROWS; ++j)
+        {
+            Grid[i][j] = Cell();
+            Grid[i][j].set(i,j);
+        }
+    }
 }
 
-void Dijkstra::updateMap(Map::Grid<> & Grid, bool & goalFound) {
+void Dijkstra::setStartCell(int col, int row){
+    Grid[col][row].type = Type::START;
+    Grid[col][row].distance = 0;
+    this->pq.push(&Grid[col][row]);
+}
+
+void Dijkstra::setGoalCell(int col, int row){
+    Grid[col][row].type = Type::GOAL;   
+}
+
+void Dijkstra::reset(){
+    for (int i = 0; i < Size::COLS; ++i)
+    {
+        for (int j = 0; j < Size::ROWS; ++j)
+        {
+            Grid[i][j] = Cell();
+            Grid[i][j].set(i,j);
+        }
+    }
+    
+    while(!pq.empty()){
+        pq.pop();
+    }
+}
+
+void Dijkstra::updateMap(bool & goalFound) {
     Cell * curr = pq.top();
     
     // combinations of neighbouring indexes

@@ -6,57 +6,65 @@
 int main()
 {   
     
-
+    //------------------------------------------------- SET UP----------------------------------------------
     // Create the SFML window
     RenderWindow window(VideoMode(Size::WIDTH, Size::HEIGHT), "Path Finding", sf::Style::Titlebar | sf::Style::Close);
     window.setSize(Vector2u(Size::WIDTH, Size::HEIGHT));
 
-    Menu Menu;
 
+    // // Init the grid map
+    // Map::Grid<> Grid = {};
+    // // Init all cells with distance of INFINITE
+    // for (int i = 0; i < Size::COLS; ++i)
+    // {
+    //     for (int j = 0; j < Size::ROWS; ++j)
+    //     {
+    //         Grid[i][j] = Cell();
+    //         Grid[i][j].set(i,j);
+    //     }
+    // }
 
+    // // lamda function to set all cells to EMPTY 
+    // auto clearMap = [&]() ->void{
+    //     for (int i = 0; i < Size::COLS; ++i)
+    //     {
+    //         for (int j = 0; j < Size::ROWS; ++j)
+    //         {
+    //             Grid[i][j].type = EMPTY;
+    //         }
+    //     }
+    // };
 
-    // Init grid
-    Map::Grid<> Grid = {};
+    // Main menu
+    Menu menu;
 
+    // SFML Process events
+    Event event;
 
-    // Init all cells with distance of INFINITE
-    for (int i = 0; i < Size::COLS; ++i)
-    {
-        for (int j = 0; j < Size::ROWS; ++j)
-        {
-            Grid[i][j] = Cell();
-            Grid[i][j].set(i,j);
-        }
-    }
-    
-    
-
-    bool goalFound = false;
-
-    // set the cell sizes
+    // Set the cell dimensions
     RectangleShape cell(sf::Vector2f(Size::CELL_SIZE, Size::CELL_SIZE));
     cell.setOutlineThickness(1.0f);                   
     cell.setOutlineColor(sf::Color::Black);           
     int x = 0;
     int y = 0;
 
-    Algorithm * algorithm;
+
+    // Algorithm object pointer
+    Algorithm * algorithm = new Astar();
 
     // Set the update rate to 60 times per second
     sf::Clock clock;
     sf::Time timePerFrame = sf::seconds(1.0f / 60.0f);
     sf::Time elapsedTime = sf::Time::Zero;
-    // Process events
-    Event event;
 
+    // boolean variables
+    bool goalFound = false;
     bool algoSet = false;
     bool startSet = false;
     bool goalSet = false;
     bool search = false;
 
-    sf::Vector2i startCell(0, 0);
-    sf::Vector2i goalCell(0, 0);
-    
+
     while (window.isOpen())
     {
         // Accumulate the elapsed time
@@ -80,16 +88,11 @@ int main()
                                 int row = std::ceil(mousePos.y / Size::CELL_SIZE);
                                 
                                 if(startSet == false){
-                                    Grid[col][row].type = Type::START;
-                                    Grid[col][row].distance = 0;
+                                    algorithm->setStartCell(col,row); 
                                     startSet = true;
-                                    algorithm->setStartCell(Grid[col][row]);
-                                    
                                 }else if (goalSet == false){
-                                    Grid[col][row].type = Type::GOAL;
-                                    // distance(Grid, col, row);
+                                    algorithm->setGoalCell(col,row);
                                     goalSet = true;
-                                    algorithm->setGoalCell(Grid[col][row], Grid);
                                 }
                             }
                         }
@@ -100,37 +103,32 @@ int main()
                                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                                 int col = std::ceil(mousePos.x / Size::CELL_SIZE);
                                 int row = std::ceil(mousePos.y / Size::CELL_SIZE);
-
-                                if(Grid[col][row].type != Type::START && Grid[col][row].type != Type::GOAL)
-                                    Grid[col][row].type = Type::WALL;
+                                algorithm->setWall(col,row);
                             }
                         }
                         break;
                     case Event::KeyPressed:
+                        // start searching
                         if (event.key.code == Keyboard::Space){
                             search = true;
-                        }else if (event.key.code == Keyboard::K){
-                            // Init all cells with distance of INFINITE
-                            for (int i = 0; i < Size::COLS; ++i)
-                            {
-                                for (int j = 0; j < Size::ROWS; ++j)
-                                {
-                                    Grid[i][j] .type = EMPTY;
-                                }
-                            }
-                            delete algorithm;
-                            algorithm = new Astar();
-                            goalFound = false;
+                        }
+                        // reset the grid to EMTPY
+                        else if (event.key.code == Keyboard::R){
+                            algorithm->reset();
                             startSet = false;
                             goalSet = false;
+                            goalFound = false;
                             search = false;
-
-                        }else if (event.key.code == Keyboard::Up){
-                            Menu.MoveUp();
+                        } 
+                        // chnage the algorithm
+                        else if (event.key.code == Keyboard::Up){
+                            menu.MoveUp();
                         }else if (event.key.code == Keyboard::Down){
-                            Menu.MoveDown();
-                        }else if (event.key.code == Keyboard::Enter){
-                            Algo selectedAlgo = Menu.getOption();
+                            menu.MoveDown();
+                        }
+                        // selecte the algorithm
+                        else if (event.key.code == Keyboard::Enter){
+                            Algo selectedAlgo = menu.getOption();
                             if(selectedAlgo == ASTAR){
                                 algorithm = new Astar();
                                 algoSet = true;
@@ -138,6 +136,12 @@ int main()
                                 algorithm = new Dijkstra();
                                 algoSet = true;
                             }
+                        }else if (event.key.code == Keyboard::E){
+                            algoSet = false;
+                            goalFound = false;
+                            startSet = false;
+                            goalSet = false;
+                            search = false;
                         }
                         break;
                 }
@@ -148,17 +152,14 @@ int main()
 
             // start algorithms after start and goal cells are set
             if(algoSet){
-                if(startSet && goalSet && search){
-                    if (goalFound == false){
-                        algorithm->updateMap(Grid, goalFound);
-                        // cout << goalFound << endl;
-                    }
+                if(startSet && goalSet && search && !goalFound){
+                    algorithm->updateMap(goalFound);
                 }
-                Render::draw(cell, window, Grid);
+                algorithm->render(cell, window);
             }else{
-                Menu.draw(window);
+                menu.draw(window);
             }
-
+            
             // // Display the updated window
             window.display();
 

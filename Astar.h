@@ -16,10 +16,13 @@ private:
 public:
     Astar();
     ~Astar();
-    void updateMap(Map::Grid<Cell>& Grid, bool& totalVisited);
-    void path(Cell * cell);
-    void setGoalCell(Cell & startCell, Map::Grid<> & Grid);
-    void setStartCell(Cell & startCell);
+    void updateMap(bool & goalFound) override;
+    void path(Cell * cell) override;
+    void setStartCell(int col, int row) override;
+    void setGoalCell(int col, int row) override;
+    void render(RectangleShape & cell, RenderWindow& window) override;
+    void setWall(int col, int row) override;
+    void reset() override;
 };
 
 #endif

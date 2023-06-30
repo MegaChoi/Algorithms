@@ -1,12 +1,37 @@
 #include "Astar.h"
 Astar::Astar(){
-    
+    for (int i = 0; i < Size::COLS; ++i)
+    {
+        for (int j = 0; j < Size::ROWS; ++j)
+        {
+            Grid[i][j] = Cell();
+            Grid[i][j].set(i,j);
+        }
+    }
 }
 
+void Astar::reset(){
+    for (int i = 0; i < Size::COLS; ++i)
+    {
+        for (int j = 0; j < Size::ROWS; ++j)
+        {
+            Grid[i][j] = Cell();
+            Grid[i][j].set(i,j);
+        }
+    }
+
+    while(!pq.empty()){
+        pq.pop();
+    }
+}
+
+
 // calcualte the distance from cell to goal cell
-void Astar::setGoalCell(Cell & goalCell, Map::Grid<> & Grid){
-    
-    this->goalCell = goalCell;
+void Astar::setGoalCell(int col, int row){
+    Grid[col][row].type = Type::GOAL;
+    cout << Grid[col][row].col << Grid[col][row].row << endl;
+    this->goalCell = Grid[col][row];
+
     // euclidean distance
     auto getH = [&](Cell & cell) ->void {
         cell.hValue = sqrt(pow(cell.row - goalCell.row,2) + pow(cell.col - goalCell.col,2));
@@ -24,14 +49,29 @@ void Astar::setGoalCell(Cell & goalCell, Map::Grid<> & Grid){
     
 }
 
-void Astar::setStartCell(Cell & startCell){
-    this->pq.push(&startCell);
+void Astar::setStartCell(int col, int row){
+    Grid[col][row].type = Type::START;
+    cout << Grid[col][row].col << Grid[col][row].row << endl;
+    Grid[col][row].distance = 0;
+    this->pq.push(&Grid[col][row]);
+}
+
+void Astar::render(RectangleShape & cell, RenderWindow& window){
+    Render::draw(cell, window, Grid);
+}
+
+void Astar::setWall(int col, int row){
+    if(Grid[col][row].type != Type::START && Grid[col][row].type != Type::GOAL)
+    Grid[col][row].type = Type::WALL;
 }
 
 
-void Astar::updateMap(Map::Grid<> & Grid, bool & goalFound) {
+
+
+void Astar::updateMap(bool & goalFound) {
+
     Cell * curr = pq.top();
-    
+
     // combinations of neighbouring indexes
     int dr[] = {-1, 0, 1, 0, -1, -1, 1, 1};
     int dc[] = {0, 1, 0, -1, -1, 1, 1, -1};
@@ -78,8 +118,9 @@ void Astar::updateMap(Map::Grid<> & Grid, bool & goalFound) {
             if (type != WALL && type != VISITED){
                 // if cell is goal trace the path
                 if (type == GOAL){
-                    cell->prev = curr;
                     goalFound = true;
+                    cell->prev = curr;
+                    // goalFound = true;
                     path(cell);
                     return type;
                 }

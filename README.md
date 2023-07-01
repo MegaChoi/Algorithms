@@ -17,5 +17,18 @@
     <li>SFML Graphics library</li>
     <li>Compiler for C++</li>
   </ul>
-    <strong> How to run the program </strong> 
+    <strong> How to run the program ?</strong> 
+    <li> 1) Selected the algorithm using the arrow keys, press ENTER to confirm </li>
+    <li> 2) Use the mouse left click to choose the starting cell</li>
+    <li> 3) Use the mouse left click again to choose the goal cell</li>
+    <li> 4) Hold the mouse left click and drag to draw walls </li>
+    <li> 5) Press R to reset</li>
+    <li> 6) Press E to select a different algorithm</li>
   <ul>
+  <br>
+  <br>
+  <img src="https://github.com/MegaChoi/Pathfinding-Visualizer/assets/102965306/1d7a68d2-382a-4431-afeb-d448798f40f3.gif" alt="" width="640" height="360">
+  <br>
+  <br>
+  <h1>Final Words</h1>
+  This project was inspired by The Coding Train in his series of "A* Pathfinding Algorithm" https://www.youtube.com/watch?v=aKYlikFAV4k 

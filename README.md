@@ -14,7 +14,7 @@
   <h1> How to use this program ? </h1>
   <strong> Dependencies you need to install </strong> 
   <ul>
-    <li>SFML Graphics library</li>
+    <li>SFML Graphics library(Change the location where you installed SFML in the make file)</li>
     <li>Compiler for C++</li>
   </ul>
     <strong> How to run the program ?</strong> 
